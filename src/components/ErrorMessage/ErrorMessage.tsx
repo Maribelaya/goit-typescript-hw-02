@@ -1,11 +1,11 @@
 import { FC } from "react";
 
-const ErrorMessage: FC = () => {
-  return (
-    <p>
-      Sorry, there are no images matching your search query. Please try again!
-    </p>
-  );
+interface ErrorMessageProps {
+  message: string;
+}
+
+const ErrorMessage: FC<ErrorMessageProps> = ({ message }) => {
+  return <p style={{ color: "red", textAlign: "center" }}>{message}</p>;
 };
 
 export default ErrorMessage;

@@ -1,10 +1,18 @@
 import axios from "axios";
-//import { ImageResult } from "../types";
 
 const ACCESS_KEY = "8YUKB2KYb8l-Sn0ibgXsbqHbGXhWTizQm6zvfasOX5M";
 
+interface Article {
+  id: string;
+  urls: {
+    small: string;
+  };
+  description?: string;
+  alt_description?: string;
+}
+
 interface FetchResponse {
-  //results: ImageResult[];
+  results: Article[];
   total: number;
   total_pages: number;
 }

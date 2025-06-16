@@ -6,15 +6,21 @@ import LoadMoreBtn from "./LoadMoreBtn/LoadMoreBtn";
 import Loader from "./Loader/Loader";
 import ErrorMessage from "./ErrorMessage/ErrorMessage";
 import { Toaster } from "react-hot-toast";
-import { fetchArticles } from "../../goit-react-hw-04/src/api";
+import { fetchArticles } from "../api";
 
 interface Article {
   id: string;
   urls: {
     small: string;
   };
-  description: string;
-  // інші поля, які є в об'єкті article
+  description?: string;
+  alt_description?: string;
+}
+
+interface FetchResponse {
+  results: Article[];
+  total: number;
+  total_pages: number;
 }
 
 const App: FC = () => {
@@ -22,14 +28,19 @@ const App: FC = () => {
   const [page, setPage] = useState<number>(1);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const searchArticles = (newQuery: string) => {
-    setQuery(`${Date.now()}/${newQuery}`);
-    setPage(1);
-    setArticles([]);
+    if (newQuery === query) {
+      setPage(1);
+      setArticles([]);
+    } else {
+      setQuery(newQuery);
+      setPage(1);
+      setArticles([]);
+    }
   };
 
   const handleLoadMore = () => {
@@ -41,19 +52,19 @@ const App: FC = () => {
       return;
     }
 
-    async function fetchData() {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        setError(false);
-        const fetchedData = await fetchArticles(query.split("/")[1], page);
+        setError(null);
+        const fetchedData = await fetchArticles(query, page);
         setArticles((prev) => [...prev, ...fetchedData.results]);
-        setError(false);
-      } catch (error) {
+      } catch {
         setError("Something went wrong. Please try again.");
       } finally {
         setLoading(false);
       }
-    }
+    };
+
     fetchData();
   }, [query, page]);
 
@@ -70,7 +81,7 @@ const App: FC = () => {
   return (
     <div>
       <SearchBar onSearch={searchArticles} />
-      {error && <ErrorMessage />}
+      {error && <ErrorMessage message={error} />}
       {loading && <Loader />}
       {articles.length > 0 && (
         <ImageGallery items={articles} openModal={openModal} />
@@ -85,7 +96,7 @@ const App: FC = () => {
           closeModal={closeModal}
         />
       )}
-      <Toaster position="right-top" />
+      <Toaster position="top-right" />
     </div>
   );
 };

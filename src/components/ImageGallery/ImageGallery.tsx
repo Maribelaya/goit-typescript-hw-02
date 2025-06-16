@@ -7,7 +7,7 @@ interface ImageItem {
   urls: {
     small: string;
   };
-  description: string;
+  description?: string;
 }
 
 interface Props {
@@ -22,7 +22,7 @@ const ImageGallery: FC<Props> = ({ items, openModal }) => {
         <li key={item.id}>
           <ImageCard
             article={item.urls.small}
-            description={item.description}
+            description={item.description || "No description"}
             onClick={() => openModal(item.urls.small)}
           />
         </li>
